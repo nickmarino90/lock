@@ -1,5 +1,6 @@
 "use strict";
 
+var path = require('path');
 var fs = require("fs");
 var pkg = require("./package");
 var webpack = require("webpack");
@@ -51,12 +52,13 @@ module.exports = function(grunt) {
         keepalive: false,
         inline: false,
         hot: false,
+        devtool: 'source-map',
         plugins: [
           new webpack.optimize.UglifyJsPlugin({
-            // compress: {
-            //   warnings: false
-            // },
-            output: './build/lock.min.js'
+            compress: {
+              warnings: false
+            }
+            // output: './build/lock.min.js'
           })
         ]
       }
@@ -66,9 +68,20 @@ module.exports = function(grunt) {
         webpack: webpackConfig,
         publicPath: "/build/"
       },
-      start: {
+      dev: {
         keepAlive: true,
         webpack: {
+          devtool: "eval",
+          debug: true
+        }
+      },
+      design: {
+        keepAlive: true,
+        webpack: {
+          output: { 
+            path: path.join(__dirname, "build"), 
+            filename: 'lock.design.js' 
+          },
           devtool: "eval",
           debug: true
         }
@@ -86,7 +99,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask("build", ["clean:build", "env:build", "stylus:build", "webpack:build"]);
   grunt.registerTask("dist", ["clean:dist", "stylus:build", "webpack:build"]);
-  grunt.registerTask("prepare_dev", ["clean:dev", /*"connect:dev",*/ "stylus:build"]);
-  grunt.registerTask("dev", ["prepare_dev", "webpack-dev-server", "watch"]);
-  grunt.registerTask("design", ["prepare_dev", "webpack", "watch"]);
+  grunt.registerTask("prepare_dev", ["clean:dev", "stylus:build"]);
+  grunt.registerTask("dev", ["prepare_dev", "webpack-dev-server:dev", "watch"]);
+  grunt.registerTask("design", ["prepare_dev", "webpack-dev-server:design", "watch"]);
 };
