@@ -7,6 +7,20 @@ module.exports = {
   resolve: {
     extensions: ["", ".webpack.js", ".web.js", ".js", ".jsx"]
   },
+  progress: true,
+  watch: true,
+  watchOptions: {
+    aggregateTimeout: 500,
+    poll: true
+  },
+  // keepalive: true,
+  // inline: true,
+  // hot: true, 
+  stats: {
+    colors: true,
+    modules: true,
+    reasons: true
+  },
   module: {
     loaders: [
       {

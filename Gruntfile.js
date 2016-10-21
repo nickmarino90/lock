@@ -7,56 +7,56 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
-    babel: {
-      dist: {
-        files: [
-          {
-            expand: true,
-            cwd:    "src",
-            src:    ["**/*.js", "**/*.jsx"],
-            dest:   "lib",
-            ext: '.js'
-          }
-        ]
-      }
-    },
-    browserify: {
-      options: {
-        browserifyOptions: {
-          extensions: ".jsx",
-          transform: ["babelify"]
-        }
-      },
-      dev: {
-        options: {
-          browserifyOptions: {
-            debug: true,
-            extensions: ".jsx",
-            transform: ["babelify"]
-          },
-          watch: true
-        },
-        src: "src/browser.js",
-        dest: "build/lock.js"
-      },
-      build: {
-        src: "src/browser.js",
-        dest: "build/lock.js"
-      },
-      design: {
-        options: {
-          browserifyOptions: {
-            debug: true,
-            extensions: ".jsx",
-            transform: ["babelify"],
-            // plugin: ['livereactload']
-          },
-          watch: true
-        },
-        src: "support/design/index.js",
-        dest: "build/lock.design.js"
-      }
-    },
+    // babel: {
+    //   dist: {
+    //     files: [
+    //       {
+    //         expand: true,
+    //         cwd:    "src",
+    //         src:    ["**/*.js", "**/*.jsx"],
+    //         dest:   "lib",
+    //         ext: '.js'
+    //       }
+    //     ]
+    //   }
+    // },
+    // browserify: {
+    //   options: {
+    //     browserifyOptions: {
+    //       extensions: ".jsx",
+    //       transform: ["babelify"]
+    //     }
+    //   },
+    //   dev: {
+    //     options: {
+    //       browserifyOptions: {
+    //         debug: true,
+    //         extensions: ".jsx",
+    //         transform: ["babelify"]
+    //       },
+    //       watch: true
+    //     },
+    //     src: "src/browser.js",
+    //     dest: "build/lock.js"
+    //   },
+    //   build: {
+    //     src: "src/browser.js",
+    //     dest: "build/lock.js"
+    //   },
+    //   design: {
+    //     options: {
+    //       browserifyOptions: {
+    //         debug: true,
+    //         extensions: ".jsx",
+    //         transform: ["babelify"],
+    //         // plugin: ['livereactload']
+    //       },
+    //       watch: true
+    //     },
+    //     src: "support/design/index.js",
+    //     dest: "build/lock.design.js"
+    //   }
+    // },
     clean: {
       build: ["build/"],
       dev: ["build/"],
@@ -105,11 +105,17 @@ module.exports = function(grunt) {
         },
 
       }
+    },
+    webpack: {
+      // options: {
+        config: require("./webpack.config.js")
+      // }
     }
   });
 
-  grunt.loadNpmTasks("grunt-babel");
-  grunt.loadNpmTasks("grunt-browserify");
+  // grunt.loadNpmTasks("grunt-babel");
+  // grunt.loadNpmTasks("grunt-browserify");
+  grunt.loadNpmTasks("grunt-webpack");
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-connect");
   grunt.loadNpmTasks('grunt-contrib-stylus');
@@ -119,9 +125,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-exec");
 
 
-  grunt.registerTask("build", ["clean:build", "env:build", "stylus:build", "browserify:build", "uglify:build"]);
+  grunt.registerTask("build", ["clean:build", "env:build", "stylus:build", "webpack", "uglify:build"]);
   grunt.registerTask("dist", ["clean:dist", "stylus:build", "babel:dist"]);
   grunt.registerTask("prepare_dev", ["clean:dev", "connect:dev", "stylus:build"]);
-  grunt.registerTask("dev", ["prepare_dev", "browserify:dev", "watch"]);
-  grunt.registerTask("design", ["prepare_dev", "browserify:design", "watch"]);
+  grunt.registerTask("dev", ["prepare_dev", "webpack", "watch"]);
+  grunt.registerTask("design", ["prepare_dev", "webpack", "watch"]);
 };
