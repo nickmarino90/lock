@@ -1,9 +1,13 @@
-var path = require('path');
 var webpack = require('webpack');
+var path = require('path');
 
 module.exports = {
   entry: './src/browser.js',
-  output: { path: __dirname + '/build', filename: 'lock.js' },
+  output: { 
+    path: path.join(__dirname, "build"), 
+    // publicPath: 'support/',
+    filename: 'lock.js' 
+  },
   resolve: {
     extensions: ["", ".webpack.js", ".web.js", ".js", ".jsx"]
   },
@@ -13,9 +17,9 @@ module.exports = {
     aggregateTimeout: 500,
     poll: true
   },
-  // keepalive: true,
-  // inline: true,
-  // hot: true, 
+  keepalive: true,
+  inline: true,
+  hot: true, 
   stats: {
     colors: true,
     modules: true,
@@ -26,7 +30,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        exclude: /node_modules/,
+        exclude: __dirname + './node_modules',
         query: {
           plugins: ["version-inline", "transform-css-import-to-string"],
           presets: ["es2015-loose", "stage-0", "react"]

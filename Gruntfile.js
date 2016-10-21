@@ -2,6 +2,7 @@
 
 var fs = require("fs");
 var pkg = require("./package");
+var webpackConfig = require("./webpack.config.js");
 
 module.exports = function(grunt) {
 
@@ -92,6 +93,13 @@ module.exports = function(grunt) {
       stylus: {
         files: ["css/index.styl"],
         tasks: ["stylus:build", "exec:touch_index"]
+      },
+      dev: {
+        files: ["src/**/*"],
+        tasks: ["webpack"],
+        options: {
+          spawn: false,
+        }
       }
     },
     uglify: {
@@ -107,14 +115,23 @@ module.exports = function(grunt) {
       }
     },
     webpack: {
-      // options: {
-        config: require("./webpack.config.js")
-      // }
+      options: webpackConfig
+    },
+    "webpack-dev-server": {
+      options: {
+        webpack: webpackConfig,
+        // publicPath: "/" + webpackConfig.output.publicPath
+      },
+      start: {
+        keepAlive: true,
+        webpack: {
+          devtool: "eval",
+          debug: true
+        }
+      }
     }
   });
 
-  // grunt.loadNpmTasks("grunt-babel");
-  // grunt.loadNpmTasks("grunt-browserify");
   grunt.loadNpmTasks("grunt-webpack");
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-connect");
@@ -127,7 +144,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask("build", ["clean:build", "env:build", "stylus:build", "webpack", "uglify:build"]);
   grunt.registerTask("dist", ["clean:dist", "stylus:build", "babel:dist"]);
-  grunt.registerTask("prepare_dev", ["clean:dev", "connect:dev", "stylus:build"]);
-  grunt.registerTask("dev", ["prepare_dev", "webpack", "watch"]);
+  grunt.registerTask("prepare_dev", ["clean:dev", /*"connect:dev",*/ "stylus:build"]);
+  grunt.registerTask("dev", ["prepare_dev", "webpack-dev-server", "watch"]);
   grunt.registerTask("design", ["prepare_dev", "webpack", "watch"]);
 };
