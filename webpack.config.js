@@ -5,7 +5,6 @@ module.exports = {
   entry: './src/browser.js',
   output: { 
     path: path.join(__dirname, "build"), 
-    // publicPath: 'support/',
     filename: 'lock.js' 
   },
   resolve: {
